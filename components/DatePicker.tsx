@@ -7,11 +7,16 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import Stack from '@mui/material/Stack'
 
-export default function DatePicker() {
+interface IDatePicker {
+  onChange: (date: Date) => void
+}
+
+export default function DatePicker({ onChange }: IDatePicker) {
   const [value, setValue] = useState<Dayjs | null>(dayjs())
 
   const handleChange = (newValue: Dayjs | null) => {
     setValue(newValue)
+    newValue && onChange(newValue.toDate())
   }
 
   return (
@@ -23,7 +28,7 @@ export default function DatePicker() {
             inputFormat='MM/DD/YYYY'
             value={value}
             onChange={handleChange}
-            renderInput={(params) => <TextField {...params} />}
+            renderInput={(params) => <TextField name='dob' {...params} />}
           />
         </Stack>
       </LocalizationProvider>

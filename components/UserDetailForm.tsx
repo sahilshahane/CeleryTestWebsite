@@ -7,15 +7,13 @@ import Button from '@mui/material/Button'
 import FormControl from '@mui/material/FormControl'
 import * as yup from 'yup'
 import { useFormik } from 'formik'
+import axios from 'axios'
 
 interface IUserDetailData {
   name: String
   dob: Date
   email: String
-  phoneNo: {
-    countryCode: String
-    number: String | number
-  }
+  phoneNo: String
 }
 
 const validationSchema = yup.object().shape({
@@ -25,26 +23,32 @@ const validationSchema = yup.object().shape({
     .required('Email is required'),
   dob: yup.date().required('Date of Birth is required'),
   name: yup.string().required('Your Name is required'),
-  phoneNo: yup.object().shape({
-    countryCode: yup.string().required('Country Code is required'),
-    number: yup.number().required('10 Digit Phone number is required'),
-  }),
+  phoneNo: yup.string().required('Phone no. is required'),
 })
 
-export default function UserDetailForm() {
+interface IUserDetailForm {
+  onSuccess: (val: any) => void
+  onError: (err: String) => void
+}
+
+export default function UserDetailForm({
+  onSuccess,
+  onError,
+}: IUserDetailForm) {
   const formik = useFormik<IUserDetailData>({
     initialValues: {
       dob: new Date(),
       email: '',
       name: '',
-      phoneNo: {
-        countryCode: '',
-        number: '',
-      },
+      phoneNo: '',
     },
     validationSchema: validationSchema,
-    onSubmit: (val) => {
-      alert(JSON.stringify(val, null, 2))
+    onSubmit: (val, formikHelpers) => {
+      console.log(val)
+      axios
+        .post(process.env.NEXT_PUBLIC_BACKEND_URL + '/user-form', val)
+        .then((res) => onSuccess(res.data))
+        .catch((err) => onError(err?.response?.data || 'Something went wrong'))
     },
   })
 
@@ -52,7 +56,7 @@ export default function UserDetailForm() {
     <>
       <form method='POST' onSubmit={formik.handleSubmit}>
         <Container>
-          <Stack spacing={1} py={3}>
+          <Stack spacing={1.5} py={3}>
             <Box>
               <FormControl>
                 <TextField
@@ -80,41 +84,23 @@ export default function UserDetailForm() {
               />
             </Box>
             <Box>
-              <DatePicker />
+              <DatePicker
+                onChange={(date) => formik.setFieldValue('dob', date)}
+              />
             </Box>
             <Box>
               <Stack>
                 <TextField
-                  label='Country Code'
-                  name='countryCode'
+                  label='Phone no.'
+                  name='phoneNo'
                   variant='outlined'
                   type='text'
-                  value={formik.values.phoneNo.countryCode}
+                  value={formik.values.phoneNo}
                   onChange={formik.handleChange}
                   error={
-                    formik.touched.phoneNo?.countryCode &&
-                    Boolean(formik.errors.phoneNo?.countryCode)
+                    formik.touched.phoneNo && Boolean(formik.errors.phoneNo)
                   }
-                  helperText={
-                    formik.touched.phoneNo?.countryCode &&
-                    formik.errors.phoneNo?.countryCode
-                  }
-                />
-                <TextField
-                  label='number'
-                  name='number'
-                  variant='outlined'
-                  type='tel'
-                  value={formik.values.phoneNo.number}
-                  onChange={formik.handleChange}
-                  error={
-                    formik.touched.phoneNo?.number &&
-                    Boolean(formik.errors.phoneNo?.number)
-                  }
-                  helperText={
-                    formik.touched.phoneNo?.number &&
-                    formik.errors.phoneNo?.number
-                  }
+                  helperText={formik.touched.phoneNo && formik.errors.phoneNo}
                 />
               </Stack>
             </Box>

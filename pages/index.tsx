@@ -1,15 +1,16 @@
 import Head from 'next/head'
 import Card from '@mui/material/Card'
-import Box from '@mui/material/Box'
-import Stack from '@mui/material/Stack'
-import Container from '@mui/material/Container'
-import TextField from '@mui/material/TextField'
-import DatePicker from '@/components/DatePicker'
-import Button from '@mui/material/Button'
-import FormControl from '@mui/material/FormControl'
 import UserDetailForm from '@/components/UserDetailForm'
+import { useRouter } from 'next/router'
 
 export default function Home() {
+  const router = useRouter()
+
+  const redirectUserForms = (val: String) => {
+    alert(val)
+    router.push('/user-form')
+  }
+
   return (
     <>
       <Head>
@@ -26,7 +27,10 @@ export default function Home() {
           }}
         >
           <Card variant='outlined'>
-            <UserDetailForm />
+            <UserDetailForm
+              onSuccess={redirectUserForms}
+              onError={(err) => alert(err)}
+            />
           </Card>
         </div>
       </main>
