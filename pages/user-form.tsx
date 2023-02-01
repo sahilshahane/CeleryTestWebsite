@@ -26,6 +26,7 @@ export default function UserFormList() {
   const [isLoading, setLoading] = useState(true)
 
   useEffect(() => {
+    setLoading(() => true)
     getTotalUserEntries()
       .then((res) => {
         if (typeof res === 'number') setTotalEntries(res || 0)
@@ -35,11 +36,11 @@ export default function UserFormList() {
           'Something went wrong while retrieving Total count of User Form entries'
         )
       )
-      .finally(() => setLoading(false))
+      .finally(() => setLoading(() => false))
   }, [])
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(() => true)
     getUserFormList(page)
       .then((res) => {
         if (typeof res === 'object') setRows(res)
@@ -47,7 +48,7 @@ export default function UserFormList() {
       .catch((err) =>
         alert('Something went wrong while retrieving List of User Form Entries')
       )
-      .finally(() => setLoading(false))
+      .finally(() => setLoading(() => false))
   }, [page])
 
   return (

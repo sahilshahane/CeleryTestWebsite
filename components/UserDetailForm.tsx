@@ -1,5 +1,6 @@
 //@ts-nocheck
 
+import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Container from '@mui/material/Container'
@@ -10,6 +11,7 @@ import FormControl from '@mui/material/FormControl'
 import * as yup from 'yup'
 import { useFormik } from 'formik'
 import axios from 'axios'
+import Loader from '@/components/Loader'
 
 interface IUserDetailData {
   name: String
@@ -31,11 +33,13 @@ const validationSchema = yup.object().shape({
 interface IUserDetailForm {
   onSuccess: (val: any) => void
   onError: (err: String) => void
+  setLoading: (prev: Boolean) => void
 }
 
 export default function UserDetailForm({
   onSuccess,
   onError,
+  setLoading,
 }: IUserDetailForm) {
   const formik = useFormik<IUserDetailData>({
     initialValues: {
@@ -46,11 +50,14 @@ export default function UserDetailForm({
     },
     validationSchema: validationSchema,
     onSubmit: (val, formikHelpers) => {
-      console.log(val)
+      setLoading(true)
       axios
-        .post(process.env.NEXT_PUBLIC_BACKEND_URL + '/user-form', val)
+        .post(process.env.NEXT_PUBLIC_BACKEND_URL + '/user-form', val, {
+          method: 'POST',
+        })
         .then((res) => onSuccess(res.data))
         .catch((err) => onError(err?.response?.data || 'Something went wrong'))
+        .finally(() => setLoading(false))
     },
   })
 

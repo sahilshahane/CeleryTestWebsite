@@ -2,6 +2,8 @@ import Head from 'next/head'
 import Card from '@mui/material/Card'
 import UserDetailForm from '@/components/UserDetailForm'
 import { useRouter } from 'next/router'
+import Loader from '@/components/Loader'
+import { useState } from 'react'
 
 export default function Home() {
   const router = useRouter()
@@ -11,6 +13,8 @@ export default function Home() {
     router.push('/user-form')
   }
 
+  const [isLoading, setLoading] = useState(false)
+
   return (
     <>
       <Head>
@@ -18,6 +22,7 @@ export default function Home() {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <main>
+        <Loader isLoading={isLoading} />
         <div
           style={{
             display: 'flex',
@@ -28,6 +33,7 @@ export default function Home() {
         >
           <Card variant='outlined'>
             <UserDetailForm
+              setLoading={setLoading as any}
               onSuccess={redirectUserForms}
               onError={(err) => alert(err)}
             />
