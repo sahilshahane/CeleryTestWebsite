@@ -1,5 +1,6 @@
+import Backdrop from '@mui/material/Backdrop'
+import CircularProgress from '@mui/material/CircularProgress'
 import { useState, CSSProperties } from 'react'
-import ClipLoader from 'react-spinners/RingLoader'
 
 const override: CSSProperties = {
   display: 'block',
@@ -8,44 +9,17 @@ const override: CSSProperties = {
 }
 
 interface ILoader {
-  isLoading: Boolean
+  isLoading: boolean
 }
 
 function Loader({ isLoading }: ILoader) {
   return (
-    isLoading && (
-      <div className='full-page-loading'>
-        <div
-          style={{
-            width: '100vw',
-            height: '100vh',
-            justifyContent: 'center',
-            alignItems: 'center',
-            display: 'flex',
-            position: 'fixed',
-            backgroundColor: 'black',
-            opacity: 0.1,
-          }}
-        ></div>
-        <div
-          style={{
-            width: '100vw',
-            height: '100vh',
-            justifyContent: 'center',
-            alignItems: 'center',
-            display: 'flex',
-          }}
-        >
-          <ClipLoader
-            color='red'
-            loading={Boolean(isLoading)}
-            cssOverride={override}
-            size={150}
-            aria-label='Loading Spinner'
-          />
-        </div>
-      </div>
-    )
+    <Backdrop
+      sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      open={isLoading}
+    >
+      <CircularProgress color='inherit' />
+    </Backdrop>
   )
 }
 
